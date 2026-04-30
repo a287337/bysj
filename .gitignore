@@ -1,0 +1,11 @@
+# Visual Studio 2008 通用忽略规则
+[Bb]in/
+[Oo]bj/
+*.suo
+*.user
+*.cache
+*.log
+*.pdb
+*.vspscc
+*.vssscc
+.vs/
