@@ -305,7 +305,7 @@ Module M_cal_yeya
                     If jdsj_base(i - 1).xiashen = jdsj_base(i).xiashen Then
                         '同深度节点，压力相等,直接赋值
                         jdsj_cacu(gk_gkxh - 1, i).gwyl = jdsj_cacu(gk_gkxh - 1, i - 1).gwyl
-                        jdsj_cacu(gk_gkxh - 1, 0).hk_Yeti_midu = jdsj_cacu(gk_gkxh - 1, i - 1).hk_Yeti_midu
+                        jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = jdsj_cacu(gk_gkxh - 1, i - 1).hk_Yeti_midu
                         jdsj_cacu(gk_gkxh - 1, i).gwyl_ok = jdsj_cacu(gk_gkxh - 1, i - 1).gwyl_ok
                         jd_gwyl_cont(i) = 1
                     Else
@@ -367,7 +367,6 @@ Module M_cal_yeya
                             If jdsj_base(i).chuishen < hym_chuishen Then
                                 jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = jdsj_cacu(gk_gkxh - 1, 0).hk_Yeti_midu
                                 jdsj_cacu(gk_gkxh - 1, i).gwyl = Val(gk_fdRow(0).Item("井口环压MPa").ToString) + jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu * 1000 * 9.8 * jdsj_base(i).chuishen / 1000
-                                jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = jdsj_cacu(gk_gkxh - 1, 0).hk_Yeti_midu
                                 jdsj_cacu(gk_gkxh - 1, i).gwyl_ok = jdsj_cacu(gk_gkxh - 1, i - 1).gwyl_ok
                             Else
                                 '环空液面位于两节点之间
@@ -407,7 +406,7 @@ Module M_cal_yeya
             If Val(gk_fdRow(0).Item("套压井底深度m").ToString) > jdsj_base(total_jd - 1).xiashen Then
                 jd_count = total_jd - 1
                 jdsj_cacu(gk_gkxh - 1, jd_count).gwyl = Val(gk_fdRow(0).Item("井底套压MPa").ToString) - (bl_temp3 - jdsj_base(jd_count).chuishen) * Val(gk_fdRow(0).Item("环液密度g╱cm3").ToString) * 9.8 / 1000 '单位MPa
-                jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = Val(gk_fdRow(0).Item("环液密度g╱cm3").ToString)
+                jdsj_cacu(gk_gkxh - 1, jd_count).hk_Yeti_midu = Val(gk_fdRow(0).Item("环液密度g╱cm3").ToString)
                 jdsj_cacu(gk_gkxh - 1, jd_count).gwyl_ok = 1
             Else
                 For i = total_jd - 1 To 1 Step -1
@@ -490,11 +489,11 @@ Module M_cal_yeya
                             If jdsj_base(i).chuishen >= hym_chuishen Then
                                 '前一点的液压等于当前点的压力减去液柱压力
                                 jdsj_cacu(gk_gkxh - 1, i).gwyl = jdsj_cacu(gk_gkxh - 1, i + 1).gwyl - (jdsj_base(i + 1).chuishen - jdsj_base(i).chuishen) * Val(gk_fdRow(0).Item("环液密度g╱cm3").ToString) * 9.8 / 1000 + dlt_ppm_gw(i) * (jdsj_base(i + 1).xiashen - jdsj_base(i).xiashen) '单位MPa
-                                jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = jdsj_cacu(gk_gkxh - 1, 0).hk_Yeti_midu
+                                jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = Val(gk_fdRow(0).Item("环液密度g╱cm3").ToString)
                                 jdsj_cacu(gk_gkxh - 1, i).gwyl_ok = jdsj_cacu(gk_gkxh - 1, i + 1).gwyl_ok
                             Else
                                 jdsj_cacu(gk_gkxh - 1, i).gwyl = jdsj_cacu(gk_gkxh - 1, i + 1).gwyl - (jdsj_base(i + 1).chuishen - hym_chuishen) * Val(gk_fdRow(0).Item("环液密度g╱cm3").ToString) * 9.8 / 1000 + dlt_ppm_gw(i) * (jdsj_base(i + 1).xiashen - Val(gk_fdRow(0).Item("环液深度m").ToString)) '单位MPa
-                                jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = Val(gk_fdRow(0).Item("环液密度g╱cm3").ToString)
+                                jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = jdsj_cacu(gk_gkxh - 1, 0).hk_Yeti_midu
                                 jdsj_cacu(gk_gkxh - 1, i).gwyl_ok = jdsj_cacu(gk_gkxh - 1, i + 1).gwyl_ok
                             End If
                         End If
@@ -569,7 +568,7 @@ Module M_cal_yeya
                             End If
                             '环空压力计算
                             '若高于环空液面，则将井口环压直接赋值
-                            If jdsj_base(i).chuishen < Val(gk_fdRow(0).Item("环液深度m").ToString) Then
+                            If jdsj_base(i).chuishen < hym_chuishen Then
                                 jdsj_cacu(gk_gkxh - 1, i).gwyl = Val(gk_fdRow(0).Item("井口环压MPa").ToString)
                                 jdsj_cacu(gk_gkxh - 1, i).hk_Yeti_midu = jdsj_cacu(gk_gkxh - 1, 0).hk_Yeti_midu
                                 'jdsj_cacu(gk_gkxh - 1, i).gwyl_ok = 1
@@ -1074,12 +1073,12 @@ Module M_cal_yeya
                             If jdsj_base(i).chuishen >= gym_chuishen Then
                                 '前一点的液压=当前点的压力-液柱压力+流体粘滞摩阻损耗的压力
                                 jdsj_cacu(gk_gkxh - 1, i).gnyl = jdsj_cacu(gk_gkxh - 1, i + 1).gnyl - (jdsj_base(i + 1).chuishen - jdsj_base(i).chuishen) * Val(gk_fdRow(0).Item("管液密度g╱cm3").ToString) * 9.8 / 1000 + dlt_ppm_gn(i) * (jdsj_base(i + 1).xiashen - jdsj_base(i).xiashen) '单位MPa
-                                jdsj_cacu(gk_gkxh - 1, i).gn_Yeti_midu = jdsj_cacu(gk_gkxh - 1, 0).gn_Yeti_midu
+                                jdsj_cacu(gk_gkxh - 1, i).gn_Yeti_midu = jdsj_cacu(gk_gkxh - 1, i + 1).gn_Yeti_midu
                                 'jdsj_cacu(gk_gkxh - 1, i).gnyl_ok = 1
                                 jdsj_cacu(gk_gkxh - 1, i).gnyl_ok = jdsj_cacu(gk_gkxh - 1, i + 1).gnyl_ok
                             Else
-                                jdsj_cacu(gk_gkxh - 1, i).gnyl = jdsj_cacu(gk_gkxh - 1, i - 1).gnyl
-                                jdsj_cacu(gk_gkxh - 1, i).gn_Yeti_midu = jdsj_cacu(gk_gkxh - 1, i - 1).gn_Yeti_midu
+                                jdsj_cacu(gk_gkxh - 1, i).gnyl = jdsj_cacu(gk_gkxh - 1, i + 1).gnyl
+                                jdsj_cacu(gk_gkxh - 1, i).gn_Yeti_midu = jdsj_cacu(gk_gkxh - 1, i + 1).gn_Yeti_midu
                                 'jdsj_cacu(gk_gkxh - 1, i).gnyl_ok = 1
                                 jdsj_cacu(gk_gkxh - 1, i).gnyl_ok = jdsj_cacu(gk_gkxh - 1, i + 1).gnyl_ok
                             End If
